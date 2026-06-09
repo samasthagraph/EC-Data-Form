@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EC Data Collection Portal - Form</title>
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Design Tokens */
+    :root {
+      --primary: #064e3b; /* Deep Emerald */
+      --primary-rgb: 6, 78, 59;
+      --primary-hover: #065f46;
+      --accent: #d97706; /* Gold/Amber */
+      --accent-hover: #b45309;
+      --bg-gradient-start: #f0fdf4;
+      --bg-gradient-end: #ecfdf5;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-border: rgba(255, 255, 255, 0.5);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --input-bg: #ffffff;
+      --input-border: #cbd5e1;
+      --input-focus: #059669;
+      --shadow: 0 10px 30px -10px rgba(6, 78, 59, 0.15);
+      --toast-bg: #064e3b;
+      --toast-text: #ffffff;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body.dark-mode {
+      --primary: #064e3b;
+      --primary-rgb: 6, 78, 59;
+      --primary-hover: #065f46;
+      --accent: #d97706;
+      --accent-hover: #b45309;
+      --bg-gradient-start: #f0fdf4;
+      --bg-gradient-end: #ecfdf5;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-border: rgba(255, 255, 255, 0.5);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --input-bg: #ffffff;
+      --input-border: #cbd5e1;
+      --input-focus: #059669;
+      --shadow: 0 10px 30px -10px rgba(6, 78, 59, 0.15);
+      --toast-bg: #064e3b;
+      --toast-text: #ffffff;
+      background-color: #f0fdf4;
+      background-image: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+    }
+
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0fdf4;
+      background-image: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      line-height: 1.5;
+    }
+
+    header {
+      background: rgba(var(--primary-rgb), 0.05);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--primary);
+    }
+
+    /* Header Nav Buttons */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .theme-toggle, .admin-link {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--text-main);
+      padding: 0.5rem 1.25rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+      text-decoration: none;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .theme-toggle:hover, .admin-link:hover {
+      background: rgba(var(--primary-rgb), 0.1);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .admin-link {
+      background: var(--primary);
+      color: var(--toast-text);
+      border-color: var(--primary);
+    }
+
+    .admin-link:hover {
+      background: var(--primary-hover);
+      color: var(--toast-text);
+      box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.2);
+    }
+
+    /* Centered Container */
+    .container {
+      max-width: 680px;
+      width: 100%;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+      flex-grow: 1;
+    }
+
+    /* Card Layout (Glassmorphism) */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      box-shadow: 0 15px 35px -5px rgba(6, 78, 59, 0.2);
+    }
+
+    body.dark-mode .card:hover {
+      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    .card-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .required-star {
+      color: #ef4444;
+      margin-left: 0.125rem;
+    }
+
+    /* Inputs & Selects */
+    input[type="text"],
+    input[type="tel"],
+    select {
+      width: 100%;
+      padding: 0.875rem 1.25rem;
+      font-family: inherit;
+      font-size: 16px; /* Prevents auto-zoom on iOS mobile browsers */
+      color: var(--text-main);
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 12px;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    input[type="text"]:focus,
+    input[type="tel"]:focus,
+    select:focus {
+      border-color: var(--input-focus);
+      box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+    }
+
+    @media (max-width: 640px) {
+      header {
+        flex-direction: column;
+        gap: 0.875rem;
+        padding: 1.25rem 1rem;
+        text-align: center;
+      }
+      
+      .header-actions {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .container {
+        margin: 1.5rem auto;
+        padding: 0 1rem;
+      }
+
+      .card {
+        padding: 1.75rem 1.25rem;
+      }
+
+      .checkbox-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Custom Checkboxes / Radios Grid */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .checkbox-card {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1rem;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: var(--transition);
+    }
+
+    .checkbox-card:hover {
+      border-color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.02);
+    }
+
+    .checkbox-card input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    .checkbox-indicator {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--input-border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    .checkbox-indicator::after {
+      content: '';
+      width: 10px;
+      height: 6px;
+      border-left: 2px solid white;
+      border-bottom: 2px solid white;
+      transform: rotate(-45deg) translateY(-1px);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    /* Checked State */
+    .checkbox-card input[type="checkbox"]:checked ~ .checkbox-indicator,
+    .checkbox-card input[type="radio"]:checked ~ .checkbox-indicator {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .checkbox-card input[type="checkbox"]:checked ~ .checkbox-indicator::after,
+    .checkbox-card input[type="radio"]:checked ~ .checkbox-indicator::after {
+      opacity: 1;
+    }
+
+    .checkbox-card input[type="checkbox"]:checked ~ span,
+    .checkbox-card input[type="radio"]:checked ~ span {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .checkbox-card input[type="checkbox"]:checked ~ .checkbox-card,
+    .checkbox-card input[type="radio"]:checked ~ .checkbox-card {
+      border-color: var(--primary);
+    }
+
+    /* Radio Indicator Circle Custom Styling */
+    .checkbox-card input[type="radio"] ~ .checkbox-indicator {
+      border-radius: 50%;
+    }
+
+    .checkbox-card input[type="radio"] ~ .checkbox-indicator::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background-color: white;
+      border-radius: 50%;
+      border: none;
+      transform: none;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    /* Cascading Dynamic Fields Classes */
+    .cascade-field {
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-10px);
+      overflow: hidden;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-top: 0;
+    }
+
+    .cascade-field.visible {
+      max-height: 100px;
+      opacity: 1;
+      transform: translateY(0);
+      margin-top: 0.5rem;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+      color: var(--toast-text);
+      border: none;
+      border-radius: 14px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.2);
+      transition: var(--transition);
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(var(--primary-rgb), 0.35);
+      background: linear-gradient(135deg, var(--primary-hover), var(--primary));
+    }
+
+    /* Toasts */
+    .toast-container {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toast {
+      background: var(--toast-bg);
+      color: var(--toast-text);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      font-weight: 500;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      animation: slideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      border-left: 4px solid var(--accent);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .toast.fade-out {
+      animation: fadeOut 0.35s ease forwards;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+      }
+    }
+
+    .input-error {
+      border-color: #ef4444 !important;
+    }
+
+    .error-msg {
+      color: #ef4444;
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      font-weight: 500;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--card-border);
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+
+
+  <main class="container">
+    <section class="card">
+      <h2 class="card-title">EC Data Collection Form</h2>
+
+      <form id="enrollmentForm" novalidate>
+        <!-- Name -->
+        <div class="form-group">
+          <label for="name">Full Name <span class="required-star">*</span></label>
+          <input type="text" id="name" placeholder="Enter full name" required>
+          <div class="error-msg" id="name-error"></div>
+        </div>
+
+        <!-- Mobile Number -->
+        <div class="form-group">
+          <label for="mobile">Mobile Number <span class="required-star">*</span></label>
+          <input type="tel" id="mobile" placeholder="e.g. 9876543210" required>
+          <div class="error-msg" id="mobile-error"></div>
+        </div>
+
+        <!-- Organization (Radio Buttons) -->
+        <div class="form-group">
+          <label>Organization <span class="required-star">*</span></label>
+          <div class="checkbox-grid">
+            <label class="checkbox-card">
+              <input type="radio" name="organization" value="Kerala Muslim Jama'ath">
+              <div class="checkbox-indicator"></div>
+              <span>KMJ</span>
+            </label>
+            <label class="checkbox-card">
+              <input type="radio" name="organization" value="SYS">
+              <div class="checkbox-indicator"></div>
+              <span>SYS</span>
+            </label>
+            <label class="checkbox-card">
+              <input type="radio" name="organization" value="SSF">
+              <div class="checkbox-indicator"></div>
+              <span>SSF</span>
+            </label>
+          </div>
+          <div class="error-msg" id="organization-error"></div>
+        </div>
+
+        <!-- Level Dropdown -->
+        <div class="form-group">
+          <label for="level">Level <span class="required-star">*</span></label>
+          <select id="level" required>
+            <option value="" disabled selected>Select Level</option>
+            <option value="District">District</option>
+            <option value="Zone">Zone</option>
+            <option value="Circle">Circle</option>
+          </select>
+          <div class="error-msg" id="level-error"></div>
+        </div>
+
+        <!-- Dynamic Cascading Fields Container -->
+        <div id="dynamic-fields-container">
+          <!-- District Dropdown -->
+          <div id="district-group" class="form-group cascade-field">
+            <label for="district">District <span class="required-star">*</span></label>
+            <select id="district">
+              <option value="" disabled selected>Select District</option>
+            </select>
+            <div class="error-msg" id="district-error"></div>
+          </div>
+
+          <!-- Zone Dropdown -->
+          <div id="zone-group" class="form-group cascade-field">
+            <label for="zone">Zone <span class="required-star">*</span></label>
+            <select id="zone">
+              <option value="" disabled selected>Select Zone</option>
+            </select>
+            <div class="error-msg" id="zone-error"></div>
+          </div>
+
+          <!-- Circle Dropdown -->
+          <div id="circle-group" class="form-group cascade-field">
+            <label for="circle">Circle <span class="required-star">*</span></label>
+            <select id="circle">
+              <option value="" disabled selected>Select Circle</option>
+            </select>
+            <div class="error-msg" id="circle-error"></div>
+          </div>
+        </div>
+
+        <!-- Organizational Position -->
+        <div class="form-group">
+          <label for="position">Organizational Position <span class="required-star">*</span></label>
+          <select id="position" required>
+            <option value="" disabled selected>Select Position</option>
+            <option value="President">President</option>
+            <option value="General Secretary">General Secretary</option>
+            <option value="Finance Secretary">Finance Secretary</option>
+            <option value="EC Convener">EC Convener</option>
+            <option value="EC Finance Secretary">EC Finance Secretary</option>
+          </select>
+          <div class="error-msg" id="position-error"></div>
+        </div>
+
+        <!-- Role (Radio Buttons) -->
+        <div class="form-group">
+          <label>Role <span class="required-star">*</span></label>
+          <div class="checkbox-grid">
+            <label class="checkbox-card">
+              <input type="radio" name="role" value="Coordinator">
+              <div class="checkbox-indicator"></div>
+              <span>Coordinator</span>
+            </label>
+            <label class="checkbox-card">
+              <input type="radio" name="role" value="Member">
+              <div class="checkbox-indicator"></div>
+              <span>Member</span>
+            </label>
+          </div>
+          <div class="error-msg" id="role-error"></div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit">
+          <span>Submit</span>
+        </button>
+
+
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Media • Samastha Centenary Conference</p>
+  </footer>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Client-Side Javascript -->
+  <script>
+    // API base URL configuration for local file and custom dev server support
+    const API_BASE = (window.location.protocol === 'file:' || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3000')
+      ? 'http://localhost:3000'
+      : '';
+
+    // 1. Hierarchical Location Data
+    let locationData = {};
+
+    async function fetchLocations() {
+      try {
+        const response = await fetch(`${API_BASE}/api/locations`);
+        if (!response.ok) throw new Error('Failed to load locations');
+        locationData = await response.json();
+      } catch (err) {
+        console.error('Error fetching locations:', err);
+        showToast('Failed to load location options from server.');
+      }
+    }
+    fetchLocations();
+
+
+    // 2. DOM Elements
+    const form = document.getElementById('enrollmentForm');
+    const levelSelect = document.getElementById('level');
+    const districtGroup = document.getElementById('district-group');
+    const districtSelect = document.getElementById('district');
+    const zoneGroup = document.getElementById('zone-group');
+    const zoneSelect = document.getElementById('zone');
+    const circleGroup = document.getElementById('circle-group');
+    const circleSelect = document.getElementById('circle');
+
+    // 3. Theme Toggle Functionality
+    const themeBtn = document.getElementById('themeBtn');
+    if (themeBtn) {
+      const themeIcon = themeBtn.querySelector('.theme-icon');
+      const themeText = themeBtn.querySelector('.theme-text');
+
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark-mode');
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Light Mode';
+      }
+
+      themeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        if (document.body.classList.contains('dark-mode')) {
+          themeIcon.textContent = '☀️';
+          themeText.textContent = 'Light Mode';
+          showToast('Dark mode activated 🌙');
+        } else {
+          themeIcon.textContent = '🌙';
+          themeText.textContent = 'Dark Mode';
+          showToast('Light mode activated ☀️');
+        }
+      });
+    } else {
+      // Check system preference even if toggle btn is removed
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark-mode');
+      }
+    }
+
+    // 4. Toast Notification helper
+    function showToast(message) {
+      const toastContainer = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `<span>🔔</span> <span>${message}</span>`;
+      toastContainer.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add('fade-out');
+        setTimeout(() => toast.remove(), 350);
+      }, 3000);
+    }
+
+    // 5. Dynamic Cascading Logic Handler
+    function populateDropdown(selectElement, optionsList, defaultText) {
+      selectElement.innerHTML = `<option value="" disabled selected>${defaultText}</option>`;
+      optionsList.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt;
+        option.textContent = opt;
+        selectElement.appendChild(option);
+      });
+    }
+
+    function showField(groupElement, selectElement) {
+      groupElement.classList.add('visible');
+      selectElement.setAttribute('required', 'required');
+    }
+
+    function hideField(groupElement, selectElement) {
+      groupElement.classList.remove('visible');
+      selectElement.removeAttribute('required');
+      selectElement.value = '';
+    }
+
+    // Level / Unit Change
+    levelSelect.addEventListener('change', () => {
+      const selectedLevel = levelSelect.value;
+      hideField(districtGroup, districtSelect);
+      hideField(zoneGroup, zoneSelect);
+      hideField(circleGroup, circleSelect);
+
+      if (selectedLevel) {
+        populateDropdown(districtSelect, Object.keys(locationData), 'Select District');
+        showField(districtGroup, districtSelect);
+      }
+    });
+
+    // District Change
+    districtSelect.addEventListener('change', () => {
+      const selectedLevel = levelSelect.value;
+      const selectedDistrict = districtSelect.value;
+      hideField(zoneGroup, zoneSelect);
+      hideField(circleGroup, circleSelect);
+
+      if (selectedLevel === 'Zone' || selectedLevel === 'Circle') {
+        if (selectedDistrict && locationData[selectedDistrict]) {
+          const zones = Object.keys(locationData[selectedDistrict]);
+          populateDropdown(zoneSelect, zones, 'Select Zone');
+          showField(zoneGroup, zoneSelect);
+        }
+      }
+    });
+
+    // Zone Change
+    zoneSelect.addEventListener('change', () => {
+      const selectedLevel = levelSelect.value;
+      const selectedDistrict = districtSelect.value;
+      const selectedZone = zoneSelect.value;
+      hideField(circleGroup, circleSelect);
+
+      if (selectedLevel === 'Circle') {
+        if (selectedDistrict && selectedZone && locationData[selectedDistrict][selectedZone]) {
+          const circles = locationData[selectedDistrict][selectedZone];
+          populateDropdown(circleSelect, circles, 'Select Circle');
+          showField(circleGroup, circleSelect);
+        }
+      }
+    });
+
+    // 6. Validation Helpers
+    function getSelectedRadioValue(name) {
+      const radio = document.querySelector(`input[name="${name}"]:checked`);
+      return radio ? radio.value : '';
+    }
+
+    function clearErrors() {
+      document.querySelectorAll('.error-msg').forEach(el => el.textContent = '');
+      document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+    }
+
+    function setError(elementId, errorText) {
+      const errorDiv = document.getElementById(`${elementId}-error`);
+      if (errorDiv) {
+        errorDiv.textContent = errorText;
+      }
+      const inputEl = document.getElementById(elementId);
+      if (inputEl) {
+        inputEl.classList.add('input-error');
+      }
+    }
+
+    function validateForm() {
+      let isValid = true;
+      clearErrors();
+
+      // Name
+      const nameVal = document.getElementById('name').value.trim();
+      if (!nameVal) {
+        setError('name', 'Name is required.');
+        isValid = false;
+      } else if (nameVal.length < 3) {
+        setError('name', 'Name must be at least 3 characters.');
+        isValid = false;
+      }
+
+      // Mobile
+      const mobileVal = document.getElementById('mobile').value.trim();
+      const mobileRegex = /^[6-9]\d{9}$/;
+      if (!mobileVal) {
+        setError('mobile', 'Mobile number is required.');
+        isValid = false;
+      } else if (!mobileRegex.test(mobileVal)) {
+        setError('mobile', 'Enter a valid 10-digit mobile number.');
+        isValid = false;
+      }
+
+      // Organization
+      const selectedOrg = getSelectedRadioValue('organization');
+      if (!selectedOrg) {
+        const orgError = document.getElementById('organization-error');
+        orgError.textContent = 'Please select an organization.';
+        isValid = false;
+      }
+
+      // Level
+      const levelVal = levelSelect.value;
+      if (!levelVal) {
+        setError('level', 'Level is required.');
+        isValid = false;
+      }
+
+      // Dynamic Dropdowns
+      if (levelVal) {
+        if (!districtSelect.value) {
+          setError('district', 'District is required.');
+          isValid = false;
+        }
+        if ((levelVal === 'Zone' || levelVal === 'Circle') && !zoneSelect.value) {
+          setError('zone', 'Zone is required.');
+          isValid = false;
+        }
+        if (levelVal === 'Circle' && !circleSelect.value) {
+          setError('circle', 'Circle is required.');
+          isValid = false;
+        }
+      }
+
+      // Position
+      const positionVal = document.getElementById('position').value;
+      if (!positionVal) {
+        setError('position', 'Position is required.');
+        isValid = false;
+      }
+
+      // Role
+      const selectedRole = getSelectedRadioValue('role');
+      if (!selectedRole) {
+        const roleError = document.getElementById('role-error');
+        roleError.textContent = 'Please select a role.';
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    // 7. Form Submission & Backend Integration
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      if (!validateForm()) {
+        showToast('Please fix the errors in the form.');
+        return;
+      }
+
+      // Collect data
+      const newRecord = {
+        name: document.getElementById('name').value.trim(),
+        mobile: document.getElementById('mobile').value.trim(),
+        organization: getSelectedRadioValue('organization'),
+        level: levelSelect.value,
+        district: districtSelect.value,
+        zone: zoneSelect.value || null,
+        circle: circleSelect.value || null,
+        position: document.getElementById('position').value,
+        role: getSelectedRadioValue('role')
+      };
+
+      // Disable submit button during submission
+      const submitBtn = form.querySelector('.btn-submit');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        const btnText = submitBtn.querySelector('span');
+        if (btnText) btnText.textContent = 'Enrolling...';
+      }
+
+      fetch(`${API_BASE}/api/enrollments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newRecord)
+      })
+      .then(async response => {
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(JSON.stringify(data.errors || { message: 'Failed to save enrollment.' }));
+        }
+        return data;
+      })
+      .then(savedRecord => {
+        showToast('Record enrolled successfully! ⚡');
+        form.reset();
+        hideField(districtGroup, districtSelect);
+        hideField(zoneGroup, zoneSelect);
+        hideField(circleGroup, circleSelect);
+      })
+      .catch(error => {
+        console.error('Error submitting form:', error);
+        try {
+          const errors = JSON.parse(error.message);
+          Object.keys(errors).forEach(field => {
+            setError(field, errors[field]);
+          });
+          showToast('Please fix the errors in the form.');
+        } catch (e) {
+          showToast('Server error. Please try again later.');
+        }
+      })
+      .finally(() => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          const btnText = submitBtn.querySelector('span');
+          if (btnText) btnText.textContent = 'Submit';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

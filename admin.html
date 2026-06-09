@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EC Data Collection Portal - Admin Dashboard</title>
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Design Tokens (Match Form page exactly) */
+    :root {
+      --primary: #064e3b; /* Deep Emerald */
+      --primary-rgb: 6, 78, 59;
+      --primary-hover: #065f46;
+      --accent: #d97706; /* Gold/Amber */
+      --accent-hover: #b45309;
+      --bg-gradient-start: #f0fdf4;
+      --bg-gradient-end: #ecfdf5;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-border: rgba(255, 255, 255, 0.5);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --input-bg: #ffffff;
+      --input-border: #cbd5e1;
+      --input-focus: #059669;
+      --shadow: 0 10px 30px -10px rgba(6, 78, 59, 0.15);
+      --toast-bg: #064e3b;
+      --toast-text: #ffffff;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+    }
+
+    body.dark-mode {
+      --primary: #064e3b;
+      --primary-rgb: 6, 78, 59;
+      --primary-hover: #065f46;
+      --accent: #d97706;
+      --accent-hover: #b45309;
+      --bg-gradient-start: #f0fdf4;
+      --bg-gradient-end: #ecfdf5;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-border: rgba(255, 255, 255, 0.5);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --input-bg: #ffffff;
+      --input-border: #cbd5e1;
+      --input-focus: #059669;
+      --shadow: 0 10px 30px -10px rgba(6, 78, 59, 0.15);
+      --toast-bg: #064e3b;
+      --toast-text: #ffffff;
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+      background-color: #f0fdf4;
+      background-image: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+    }
+
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0fdf4;
+      background-image: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      line-height: 1.5;
+    }
+
+    header {
+      background: rgba(var(--primary-rgb), 0.05);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--primary);
+    }
+
+    /* Header Nav Buttons */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .theme-toggle, .form-link {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--text-main);
+      padding: 0.5rem 1.25rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+      text-decoration: none;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .theme-toggle:hover, .form-link:hover {
+      background: rgba(var(--primary-rgb), 0.1);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .form-link {
+      background: var(--primary);
+      color: var(--toast-text);
+      border-color: var(--primary);
+    }
+
+    .form-link:hover {
+      background: var(--primary-hover);
+      color: var(--toast-text);
+      box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.2);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1280px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      flex-grow: 1;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2.25rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .stat-card {
+      background: rgba(var(--primary-rgb), 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      background: rgba(var(--primary-rgb), 0.08);
+      transform: translateY(-2px);
+    }
+
+    .stat-val {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-lbl {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-top: 0.25rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* Filters Panel */
+    .filters-container {
+      background: rgba(var(--primary-rgb), 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .filters-grid {
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+      }
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .filter-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .filter-group input, .filter-group select {
+      padding: 0.65rem 1rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 8px;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .filter-group input:focus, .filter-group select:focus {
+      border-color: var(--input-focus);
+    }
+
+    /* Action Buttons Row */
+    .dashboard-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn-primary, .btn-secondary, .btn-danger {
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(217, 119, 6, 0.15);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 15px rgba(217, 119, 6, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(var(--primary-rgb), 0.05);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    .btn-danger:hover {
+      background: var(--danger-hover);
+      box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
+    }
+
+    /* Table */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      background: var(--input-bg);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+
+    th {
+      background: rgba(var(--primary-rgb), 0.06);
+      padding: 1.1rem 1rem;
+      font-weight: 600;
+      color: var(--primary);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    td {
+      padding: 1.1rem 1rem;
+      border-bottom: 1px solid var(--card-border);
+      color: var(--text-main);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(var(--primary-rgb), 0.02);
+    }
+
+    .empty-state {
+      padding: 4rem 2rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.4;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(var(--primary-rgb), 0.1);
+      color: var(--primary);
+      margin-right: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .badge-accent {
+      background: rgba(217, 119, 6, 0.1);
+      color: var(--accent);
+    }
+
+    /* Toasts */
+    .toast-container {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toast {
+      background: var(--toast-bg);
+      color: var(--toast-text);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      font-weight: 500;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      animation: slideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      border-left: 4px solid var(--accent);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .toast.fade-out {
+      animation: fadeOut 0.35s ease forwards;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+      }
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--card-border);
+      margin-top: auto;
+    }
+
+    /* Input size mobile zoom override */
+    .filter-group input, .filter-group select {
+      font-size: 16px;
+    }
+
+    /* Mobile media queries for Dashboard */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 0.875rem;
+        padding: 1.25rem 1rem;
+        text-align: center;
+      }
+      
+      .header-actions {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .container {
+        margin: 1.5rem auto;
+        padding: 0 1rem;
+      }
+
+      .card {
+        padding: 1.75rem 1.25rem;
+      }
+
+      .dashboard-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+      }
+
+      .dashboard-actions span {
+        text-align: center;
+        margin-bottom: 0.25rem;
+      }
+
+      .btn-group {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+      }
+
+      .btn-primary, .btn-danger {
+        width: 100%;
+        justify-content: center;
+      }
+
+      /* Responsive Table: Converts rows to individual cards */
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+
+      tr {
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        margin-bottom: 1.25rem;
+        background: var(--input-bg);
+        padding: 0.75rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+      }
+
+      td {
+        border: none;
+        border-bottom: 1px solid rgba(var(--primary-rgb), 0.05);
+        position: relative;
+        padding-left: 45% !important;
+        text-align: right;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+      }
+
+      td:last-child {
+        border-bottom: none;
+      }
+
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 1rem;
+        width: 40%;
+        text-align: left;
+        font-weight: 700;
+        color: var(--primary);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="container">
+    <!-- Top Row: Stats Overview -->
+    <section class="card" style="margin-bottom: 2rem;">
+      <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <a href="index.html" class="form-link" style="padding: 0.4rem 1rem; border-radius: 9999px; font-size: 0.8rem; text-decoration: none; display: flex; align-items: center; gap: 0.25rem;">
+            <span>✏️ Enrollment Form</span>
+          </a>
+          <button class="theme-toggle" id="themeBtn" aria-label="Toggle dark mode" style="padding: 0.4rem 1rem; border-radius: 9999px; font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
+            <span class="theme-icon">🌙</span>
+            <span class="theme-text">Dark Mode</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-val" id="count-total">0</div>
+          <div class="stat-lbl">Total Records</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="count-kmj">0</div>
+          <div class="stat-lbl">KMJ (Kerala Muslim Jama'ath)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="count-sys">0</div>
+          <div class="stat-lbl">SYS</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="count-ssf">0</div>
+          <div class="stat-lbl">SSF</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Middle Row: Location Hierarchy Management -->
+    <section class="card" style="margin-bottom: 2rem; display: none;">
+      <h2 class="card-title">📍 Location Hierarchy Management</h2>
+      <p class="card-subtitle">Upload a CSV file containing District, Zone, and Circle columns to configure the dynamic dropdown options.</p>
+      
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: flex-end; background: rgba(var(--primary-rgb), 0.02); padding: 1.5rem; border: 1px solid var(--card-border); border-radius: 16px;">
+        <div class="filter-group" style="flex: 1; min-width: 250px;">
+          <label for="csvFileInput" style="margin-bottom: 0.5rem; font-weight: 600;">Choose CSV File</label>
+          <input type="file" id="csvFileInput" accept=".csv" style="width: 100%; cursor: pointer;">
+        </div>
+        <button id="uploadCsvBtn" class="btn-primary" style="height: 42px; padding: 0 1.5rem; border-radius: 8px;">
+          <span>📤 Upload Hierarchy CSV</span>
+        </button>
+      </div>
+      <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted);">
+        <p>💡 <strong>CSV File Requirements:</strong></p>
+        <ul style="margin-left: 1.25rem; margin-top: 0.25rem; display: flex; flex-direction: column; gap: 0.15rem;">
+          <li>Must contain headers: <code>District</code>, <code>Zone</code>, <code>Circle</code> (case-insensitive).</li>
+          <li>Each row represents a unique mapping (e.g. <code>Kozhikode,Kozhikode North,City</code>).</li>
+          <li>Uploading a new file will overwrite the existing dropdown database.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Bottom Row: Database Explorer -->
+    <section class="card">
+
+      <!-- Filtering Container -->
+      <div class="filters-container">
+        <h3 class="section-title">🔍 Filters</h3>
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label for="filter-search">Search Name/Mobile</label>
+            <input type="text" id="filter-search" placeholder="Type name or mobile...">
+          </div>
+          <div class="filter-group">
+            <label for="filter-organization">Organization</label>
+            <select id="filter-organization">
+              <option value="">All Organizations</option>
+              <option value="Kerala Muslim Jama'ath">KMJ</option>
+              <option value="SYS">SYS</option>
+              <option value="SSF">SSF</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-level">Level</label>
+            <select id="filter-level">
+              <option value="">All Levels</option>
+              <option value="District">District</option>
+              <option value="Zone">Zone</option>
+              <option value="Circle">Circle</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="filter-district">District</label>
+            <select id="filter-district">
+              <option value="">All Districts</option>
+              <option value="Kozhikode">Kozhikode</option>
+              <option value="Malappuram">Malappuram</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Panel -->
+      <div class="dashboard-actions">
+        <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-muted);" id="filtered-count-lbl">
+          Showing 0 of 0 records
+        </span>
+        <div class="btn-group">
+          <button id="exportBtn" class="btn-primary">
+            <span>📥 Export to Excel (CSV)</span>
+          </button>
+          <button id="resetBtn" class="btn-danger">
+            <span>🔄 Reset Database</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <div class="table-container">
+        <table id="submissionsTable">
+          <thead>
+            <tr>
+              <th>Full Name</th>
+              <th>Mobile Number</th>
+              <th>Organization</th>
+              <th>Level & Hierarchy Path</th>
+              <th>Position</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody id="submissionsBody">
+            <!-- Rendered Dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Media • Samastha Centenary Conference</p>
+  </footer>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Client-Side Javascript -->
+  <script>
+    // API base URL configuration for local file and custom dev server support
+    const API_BASE = (window.location.protocol === 'file:' || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3000')
+      ? 'http://localhost:3000'
+      : '';
+
+    // 1. DOM Elements
+    const searchInput = document.getElementById('filter-search');
+    const orgFilter = document.getElementById('filter-organization');
+    const levelFilter = document.getElementById('filter-level');
+    const districtFilter = document.getElementById('filter-district');
+
+    const totalCountEl = document.getElementById('count-total');
+    const kmjCountEl = document.getElementById('count-kmj');
+    const sysCountEl = document.getElementById('count-sys');
+    const ssfCountEl = document.getElementById('count-ssf');
+    
+    const filteredCountLabel = document.getElementById('filtered-count-lbl');
+    const submissionsBody = document.getElementById('submissionsBody');
+
+    const exportBtn = document.getElementById('exportBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    // Global database cache
+    let enrollmentDatabase = [];
+    let locationData = {};
+
+    // Fetch submissions from Backend Server
+    async function fetchDatabase() {
+      try {
+        const response = await fetch(`${API_BASE}/api/enrollments`);
+        if (!response.ok) throw new Error('Failed to fetch enrollments');
+        enrollmentDatabase = await response.json();
+        populateDistrictFilter();
+      } catch (error) {
+        console.error('Error fetching database:', error);
+        showToast('Error loading records from server.');
+      }
+    }
+
+    // Fetch locations hierarchy and update district filter options
+    async function fetchLocations() {
+      try {
+        const response = await fetch(`${API_BASE}/api/locations`);
+        if (!response.ok) throw new Error('Failed to load locations');
+        locationData = await response.json();
+        populateDistrictFilter();
+      } catch (err) {
+        console.error('Error fetching locations:', err);
+        showToast('Failed to load location filter options.');
+      }
+    }
+
+    function populateDistrictFilter() {
+      const districtSelect = document.getElementById('filter-district');
+      if (districtSelect) {
+        const districts = new Set();
+        
+        // Add districts from locations hierarchy (dynamically imported CSV data)
+        if (locationData) {
+          Object.keys(locationData).forEach(dist => {
+            if (dist) districts.add(dist);
+          });
+        }
+        
+        // Add districts from actual database submissions
+        if (enrollmentDatabase) {
+          enrollmentDatabase.forEach(rec => {
+            if (rec.district) districts.add(rec.district);
+          });
+        }
+        
+        districtSelect.innerHTML = '<option value="">All Districts</option>';
+        
+        // Populate alphabetically sorted districts
+        Array.from(districts).sort().forEach(dist => {
+          const opt = document.createElement('option');
+          opt.value = dist;
+          opt.textContent = dist;
+          districtSelect.appendChild(opt);
+        });
+      }
+    }
+
+    // 3. Theme Toggle Functionality
+    const themeBtn = document.getElementById('themeBtn');
+    const themeIcon = themeBtn.querySelector('.theme-icon');
+    const themeText = themeBtn.querySelector('.theme-text');
+
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.body.classList.add('dark-mode');
+      themeIcon.textContent = '☀️';
+      themeText.textContent = 'Light Mode';
+    }
+
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      if (document.body.classList.contains('dark-mode')) {
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Light Mode';
+        showToast('Dark mode activated 🌙');
+      } else {
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'Dark Mode';
+        showToast('Light mode activated ☀️');
+      }
+    });
+
+    // 4. Toast Notification helper
+    function showToast(message) {
+      const toastContainer = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `<span>🔔</span> <span>${message}</span>`;
+      toastContainer.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add('fade-out');
+        setTimeout(() => toast.remove(), 350);
+      }, 3000);
+    }
+
+    // 5. Dynamic Filtering Logic
+    function getFilteredRecords() {
+      const db = enrollmentDatabase;
+      const searchVal = searchInput.value.toLowerCase().trim();
+      const orgVal = orgFilter.value;
+      const levelVal = levelFilter.value;
+      const districtVal = districtFilter.value;
+
+      return db.filter(rec => {
+        // Text search (matches Name or Mobile)
+        const matchText = !searchVal || 
+          rec.name.toLowerCase().includes(searchVal) || 
+          rec.mobile.includes(searchVal);
+
+        // Dropdown matches
+        const matchOrg = !orgVal || rec.organization === orgVal;
+        const matchLevel = !levelVal || rec.level === levelVal;
+        const matchDistrict = !districtVal || rec.district === districtVal;
+
+        return matchText && matchOrg && matchLevel && matchDistrict;
+      });
+    }
+
+    // Render Stats & Explorer Table
+    function renderDashboard() {
+      const db = enrollmentDatabase;
+      const filtered = getFilteredRecords();
+
+      // Render stats cards if elements exist
+      if (totalCountEl) totalCountEl.textContent = db.length;
+      
+      let kmj = 0;
+      let sys = 0;
+      let ssf = 0;
+
+      db.forEach(rec => {
+        if (rec.organization === "Kerala Muslim Jama'ath") kmj++;
+        if (rec.organization === "SYS") sys++;
+        if (rec.organization === "SSF") ssf++;
+      });
+
+      if (kmjCountEl) kmjCountEl.textContent = kmj;
+      if (sysCountEl) sysCountEl.textContent = sys;
+      if (ssfCountEl) ssfCountEl.textContent = ssf;
+
+      // Update Filter Label
+      filteredCountLabel.textContent = `Showing ${filtered.length} of ${db.length} records`;
+
+      // Render explorer table
+      if (filtered.length === 0) {
+        submissionsBody.innerHTML = `
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <p>No records match the active filter criteria.</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      submissionsBody.innerHTML = '';
+      
+      // Render filtered records (newest first)
+      [...filtered].reverse().forEach(rec => {
+        const row = document.createElement('tr');
+
+        // Name
+        const nameCell = document.createElement('td');
+        nameCell.setAttribute('data-label', 'Full Name');
+        nameCell.innerHTML = `<strong>${escapeHTML(rec.name)}</strong>`;
+        row.appendChild(nameCell);
+
+        // Mobile
+        const mobileCell = document.createElement('td');
+        mobileCell.setAttribute('data-label', 'Mobile Number');
+        mobileCell.textContent = rec.mobile;
+        row.appendChild(mobileCell);
+
+        // Organization
+        const orgCell = document.createElement('td');
+        orgCell.setAttribute('data-label', 'Organization');
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        badge.textContent = rec.organization === "Kerala Muslim Jama'ath" ? "KMJ" : rec.organization;
+        orgCell.appendChild(badge);
+        row.appendChild(orgCell);
+
+        // Level & Hierarchy
+        const hierarchyCell = document.createElement('td');
+        hierarchyCell.setAttribute('data-label', 'Level & Hierarchy');
+        let details = [rec.district];
+        if (rec.zone) details.push(rec.zone);
+        if (rec.circle) details.push(rec.circle);
+        
+        hierarchyCell.innerHTML = `<strong>${escapeHTML(rec.level)}</strong><br>
+          <span style="font-size:0.75rem; color:var(--text-muted);">${details.map(escapeHTML).join(' &rarr; ')}</span>`;
+        row.appendChild(hierarchyCell);
+
+        // Position
+        const posCell = document.createElement('td');
+        posCell.setAttribute('data-label', 'Position');
+        posCell.textContent = rec.position;
+        row.appendChild(posCell);
+
+        // Role
+        const roleCell = document.createElement('td');
+        roleCell.setAttribute('data-label', 'Role');
+        const badgeRole = document.createElement('span');
+        badgeRole.className = 'badge badge-accent';
+        badgeRole.textContent = rec.role;
+        roleCell.appendChild(badgeRole);
+        row.appendChild(roleCell);
+
+        submissionsBody.appendChild(row);
+      });
+    }
+
+    // 6. CSV Excel Export Implementation
+    function exportToCSV() {
+      const filtered = getFilteredRecords();
+      if (filtered.length === 0) {
+        showToast('No records available to export.');
+        return;
+      }
+
+      const headers = [
+        "Full Name", 
+        "Mobile Number", 
+        "Organization", 
+        "Level", 
+        "District", 
+        "Zone", 
+        "Circle", 
+        "Organizational Position", 
+        "Role"
+      ];
+
+      const csvRows = [headers.join(",")];
+
+      filtered.forEach(rec => {
+        const rowValues = [
+          escapeCSV(rec.name),
+          escapeCSV(rec.mobile),
+          escapeCSV(rec.organization),
+          escapeCSV(rec.level),
+          escapeCSV(rec.district || ''),
+          escapeCSV(rec.zone || ''),
+          escapeCSV(rec.circle || ''),
+          escapeCSV(rec.position),
+          escapeCSV(rec.role)
+        ];
+        csvRows.push(rowValues.join(","));
+      });
+
+      // Include UTF-8 BOM so Excel opens it with proper encoding automatically
+      const csvString = "\uFEFF" + csvRows.join("\n");
+      const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute("href", url);
+      link.setAttribute("download", "enrollment_records.csv");
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast(`Exported ${filtered.length} records to enrollment_records.csv 📈`);
+    }
+
+    function escapeCSV(val) {
+      if (val === null || val === undefined) return '';
+      let str = String(val);
+      if (str.includes('"') || str.includes(',') || str.includes('\n') || str.includes('\r')) {
+        str = '"' + str.replace(/"/g, '""') + '"';
+      }
+      return str;
+    }
+
+    // 7. Reset / Seeding Actions
+    function resetDatabase() {
+      if (confirm('Are you sure you want to clear all enrollment submissions from the database? This action cannot be undone.')) {
+        fetch(`${API_BASE}/api/enrollments/reset`, { method: 'POST' })
+          .then(response => {
+            if (!response.ok) throw new Error('Reset failed');
+            return response.json();
+          })
+          .then(() => {
+            showToast('Database cleared successfully. 🔄');
+            searchInput.value = '';
+            orgFilter.value = '';
+            levelFilter.value = '';
+            districtFilter.value = '';
+            return fetchDatabase();
+          })
+          .then(() => {
+            renderDashboard();
+          })
+          .catch(error => {
+            console.error(error);
+            showToast('Failed to reset database.');
+          });
+      }
+    }
+
+    // 8. Event Listeners
+    searchInput.addEventListener('input', renderDashboard);
+    orgFilter.addEventListener('change', renderDashboard);
+    levelFilter.addEventListener('change', renderDashboard);
+    districtFilter.addEventListener('change', renderDashboard);
+    exportBtn.addEventListener('click', exportToCSV);
+    resetBtn.addEventListener('click', resetDatabase);
+
+    // CSV Location Upload Logic
+    const csvFileInput = document.getElementById('csvFileInput');
+    const uploadCsvBtn = document.getElementById('uploadCsvBtn');
+
+    uploadCsvBtn.addEventListener('click', () => {
+      const file = csvFileInput.files[0];
+      if (!file) {
+        showToast('Please select a CSV file first.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const text = e.target.result;
+        
+        // Show loading state
+        uploadCsvBtn.disabled = true;
+        const btnText = uploadCsvBtn.querySelector('span');
+        if (btnText) btnText.textContent = 'Uploading...';
+
+        fetch(`${API_BASE}/api/locations/upload`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ csvText: text })
+        })
+        .then(async response => {
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || 'Upload failed');
+          }
+          return data;
+        })
+        .then(result => {
+          showToast(`Successfully uploaded hierarchy CSV! ⚡`);
+          csvFileInput.value = ''; // Reset input
+          return fetchLocations();
+        })
+        .then(() => {
+          renderDashboard();
+        })
+        .catch(err => {
+          console.error(err);
+          showToast(err.message || 'Error uploading CSV.');
+        })
+        .finally(() => {
+          uploadCsvBtn.disabled = false;
+          if (btnText) btnText.textContent = 'Upload Hierarchy CSV';
+        });
+      };
+      reader.readAsText(file);
+    });
+
+    // Initial fetch and render
+    Promise.all([fetchDatabase(), fetchLocations()]).then(() => {
+      renderDashboard();
+    });
+
+
+    // Helper to escape HTML tags and prevent XSS injections
+    function escapeHTML(str) {
+      if (!str) return '';
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>
