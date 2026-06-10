@@ -428,6 +428,16 @@ app.post('/api/enrollments/reset', async (req, res) => {
   }
 });
 
+// Serve admin.html explicitly (required for Vercel static file bundling)
+app.get('/admin.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+// Serve index.html explicitly
+app.get('/index.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // Catch-all route to serve index.html for undefined routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
