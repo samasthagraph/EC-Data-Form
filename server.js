@@ -158,8 +158,8 @@ async function seedLocations() {
   }
 }
 
-// Database schema migration/initialization
-async function initDB() {
+// Database schema migration/initialization with retry logic
+async function initDB(retries = 5, delay = 5000) {
   const createEnrollmentsTable = `
     CREATE TABLE IF NOT EXISTS enrollments (
       id SERIAL PRIMARY KEY,
@@ -183,17 +183,26 @@ async function initDB() {
       circle VARCHAR(255) NOT NULL
     );
   `;
-  try {
-    await pool.query(createEnrollmentsTable);
-    console.log('Table "enrollments" verified.');
-    await pool.query(createLocationsTable);
-    console.log('Table "locations" verified.');
-    // Skip automatic seeding of mock records so database remains clean for production.
-    // await seedDatabase();
-    await seedLocations();
-  } catch (err) {
-    console.error('Database connection or initialization error:', err.message);
-    process.exit(1);
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      console.log(`Database initialization attempt ${attempt} of ${retries}...`);
+      await pool.query(createEnrollmentsTable);
+      console.log('Table "enrollments" verified.');
+      await pool.query(createLocationsTable);
+      console.log('Table "locations" verified.');
+      await seedLocations();
+      console.log('Database initialization completed successfully.');
+      return; // Exit function on success
+    } catch (err) {
+      console.error(`Database connection or initialization error (attempt ${attempt}):`, err.message);
+      if (attempt < retries) {
+        console.log(`Retrying in ${delay / 1000} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      } else {
+        console.error('All database initialization attempts failed. Server remains running without active database connection.');
+      }
+    }
   }
 }
 
@@ -424,9 +433,8 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Initialize DB and then start Express Server
-initDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
-  });
+// Start Express Server immediately and initialize DB in background
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
+  initDB(); // Non-blocking background execution
 });
